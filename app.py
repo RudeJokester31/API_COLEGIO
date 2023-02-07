@@ -11,6 +11,7 @@ conexion = MySQL(app)
 @app.route("/usuarios", methods=['GET'])
 def listar_usuarios():
     try:
+        #variable de cursor para la bd
         cursor=conexion.connection.cursor()
         sql="SELECT * FROM usuario ORDER BY id"
         cursor.execute(sql)
