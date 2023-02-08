@@ -5,6 +5,7 @@ class DevelopmentConfig():
     MYSQL_PASSWORD = ""
     MYSQL_DB = "colegio"
 
+
 config = {
     "development": DevelopmentConfig
 }
