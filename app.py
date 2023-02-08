@@ -50,7 +50,7 @@ def Registrar_usuarios():
     try:
         cursor = conexion.connection.cursor()
         sql = """INSERT INTO usuario (username, password, NOMBRES, APELLIDOS, EDAD, GRADO, ROL)
-        VALUES ('{0}','{1}', '{2}', '{3}', '{4}', '{5}', '{6}')""".format(request.json['username'], request.json['password'], request.json['NOMBRES'], request.json['APELLIDOS'], int(request.json['EDAD']), int(request.json['GRADO']), request.json['ROL'])
+        VALUES ('{0}','{1}', '{2}', '{3}', '{4}', '{5}', '{6}')""".format(request.json['username'], utils.encryp_Password(request.json['password']), request.json['NOMBRES'], request.json['APELLIDOS'], int(request.json['EDAD']), int(request.json['GRADO']), request.json['ROL'])
         print(sql)
         cursor.execute(sql)
         conexion.connection.commit()
