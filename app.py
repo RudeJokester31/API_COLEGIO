@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_mysqldb import MySQL
 from config import config
 from flask_cors import CORS
+import utils
 
 
 app = Flask(__name__)
@@ -44,32 +45,32 @@ def Consultar_usuario(id):
         return jsonify({"mensaje": "Error", "Exito": False})
 
 
-@app.route("/usuarios", methods=["POST"])
+@app.route("/registrar_Usuario", methods=["POST"])
 def Registrar_usuarios():
     try:
         cursor = conexion.connection.cursor()
-        sql = """INSERT INTO usuario (id, username, password, NOMBRES, APELLIDOS, EDAD, GRADO, ROL, ID_HUELLA)
-        VALUES ('{0}','{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')""".format(request.json['id'], request.json['username'], request.json['password'], request.json['NOMBRES'], request.json['APELLIDOS'], request.json['EDAD'], request.json['GRADO'],
-                                                                                        request.json['ROL'], request.json['ID_HUELLA'])
+        sql = """INSERT INTO usuario (username, password, NOMBRES, APELLIDOS, EDAD, GRADO, ROL)
+        VALUES ('{0}','{1}', '{2}', '{3}', '{4}', '{5}', '{6}')""".format(request.json['username'], request.json['password'], request.json['NOMBRES'], request.json['APELLIDOS'], int(request.json['EDAD']), int(request.json['GRADO']), request.json['ROL'])
+        print(sql)
         cursor.execute(sql)
         conexion.connection.commit()
-        return jsonify({"mensaje": "Usuario registrado", "Exito": True})
+        return jsonify({"mensaje": "Usuario registrado", "Codigo": True})
     except Exception as ex:
-        return jsonify({"mensaje": "Error", "Exito": False})
+        return jsonify({"mensaje": ex, "Codigo": False})
 
 
 @app.route("/login", methods=["POST"])
 def login():
     try:
         user = request.json
-        print(user)
         cursor = conexion.connection.cursor()
         sql = """SELECT id, username, password FROM
-            usuario WHERE username= '{}' AND password ='{}'""".format(user["username"], user["password"])
+            usuario WHERE username= '{}'""".format(user["username"])
         cursor.execute(sql)
         row = cursor.fetchone()
-        if row != None:
-            return jsonify({"mensaje": "ok", "codigo": "True", "id": row[0], "usuario": row[1], "password": row[2]})
+        password_Bd = utils.return_Password(row[2])
+        if password_Bd == user["password"]:
+            return jsonify({"mensaje": "ok", "codigo": "True", "id": row[0], "usuario": row[1], "password": password_Bd})
         else:
             return jsonify({"mensaje": "Usuario no existe o datos incorrectos", "codigo": "False"})
     except Exception as ex:
