@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 09-02-2023 a las 00:44:58
--- Versión del servidor: 10.4.27-MariaDB
--- Versión de PHP: 8.2.0
+-- Host: localhost
+-- Generation Time: Feb 09, 2023 at 04:04 AM
+-- Server version: 10.4.18-MariaDB
+-- PHP Version: 8.0.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `colegio`
+-- Database: `colegio`
 --
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `usuario`
+-- Table structure for table `usuario`
 --
 
 CREATE TABLE `usuario` (
@@ -37,42 +37,44 @@ CREATE TABLE `usuario` (
   `GRADO` int(2) DEFAULT NULL,
   `ROL` varchar(30) DEFAULT NULL,
   `ID_HUELLA` int(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Volcado de datos para la tabla `usuario`
+-- Dumping data for table `usuario`
 --
 
 INSERT INTO `usuario` (`id`, `username`, `password`, `NOMBRES`, `APELLIDOS`, `EDAD`, `GRADO`, `ROL`, `ID_HUELLA`) VALUES
-(1, 'jeospino', '123', 'Jesly Paola', 'Ospino Porras', 20, 0, 'ADMINISTRADOR', 1),
-(2, 'mjortiz', '123', 'Shelsy Mariani', 'Cruz Yepes', 19, 0, 'ADMINISTRADOR', 2),
-(3, 'magonzalo', '123', 'Valery Patricia', 'Aguilar Sierra', 12, 6, 'ESTUDIANTE', 3),
-(4, 'bavillanueva', '123', 'Bryan Alfonso', 'VILLANUEVA RIVAS', 20, 0, 'ADMINISTRADOR', 4),
-(5, 'elepalza', '123', 'Eduardo Lora', 'Epalza Ospino', 16, 10, 'ESTUDIANTE', 5),
-(6, 'jaepalza', '123', 'Jhostn Alexander', 'Epalza Manjarrez', 20, 0, 'ADMINISTRADOR', 6),
-(7, 'jomarco', '123', 'Jhonny Hilton', 'Epalza Herrera', 49, 0, 'ADMINISTRADOR', 7),
-(8, 'kepalza', '123', 'Kewin Jesus', 'Epalza Manjarrez', 17, 0, 'EGRESADO', 8),
-(9, 'wemanjarrez', '123', 'Wendy Johana', 'Manjarrez Novoa', 41, 0, 'ADMINISTRADOR', 9);
+(1, 'jeospino', '+Mf0*eWKYZX+G2u0BPnrhzL9olw==*IKTK1l7/6Hbp9qOB7zNqjg==*c5AU7Oc55Ts+oOACfO3/ZA==', 'Jesly Paola', 'Ospino Porras', 20, 0, 'ADMINISTRADOR', 1),
+(2, 'mjortiz', 'J5z/*mKkan29BV04UF/AyMtD8HQ==*mTG2HLwqxBwd0dzLD/5HnA==*l1h2UV1XAR9Cswb4J6hPBA==', 'MIGUEL JOSE', 'ORTIZ ORTIZ', 13, 6, 'ESTUDIANTE', 2),
+(3, 'magonzalo', '/zBe*tw5pCE8fRuSLVRSn9fVJUQ==*xoBNNMMbdVxcDWJDCeI35w==*pv4iSE9U+bEC8+YCW4gaHg==', 'marco', 'GONZALO', 15, 9, 'ESTUDIANTE', 3),
+(4, 'bavillanueva', 'hf4R*eFg3afeMbJ3XaDMAC15+RA==*wiOPw6Tb5q0no1WhoRFsHg==*qZuXK+PjVXDUtAHq9mfAuw==', 'Bryan Alfonso', 'VILLANUEVA RIVAS', 18, 11, 'ESTUDIANTE', 4),
+(5, 'elepalza', 'zljJ*jayfAbw/YrAkEU41bLoAcQ==*JHcGLEa1vknsm1QMBhRJDg==*ARDS8SLCgwczhE7YzCaZwQ==', 'EDUARDO LORA', 'EPALZA OSPINO', 16, 10, 'ESTUDIANTE', 5),
+(6, 'jaepalza', 's63M*bGdOKoa89wAxKfDyKkS6Bg==*eZ41/O5ZGl+2HTq6q6x70w==*Sm1eM3EcfaSoSz55cRSTXA==', 'JHOSTIN ALEXANDER', 'EPALZA MANJARREZ', 20, 0, 'ADMINISTRADOR', 6),
+(7, 'jomarco', 'p4Jq*jYPeRtb3PflPJ4jkXZ+DCw==*D/y2r1g9KAFczHVMPi2Klg==*Tl/z3OCofVMjasNXcGMfDg==', 'JOSE JOSE', 'MARCO FABIAN', 20, 10, 'ESTUDIANTE', 7),
+(8, 'kepalza', '+gbY*BOeXMUgr0zkz8T4r1wEKsA==*Ez7S/VY2CdWlmwZO7GOwcQ==*ojYyV8KF/C2fd+60R1m/tw==', 'KEWIN JESUS', 'EPALZA MANJARREZ', 17, 0, 'EGRESADO', 8),
+(9, 'wemanjarrez', 'W8FU*ITrhGlf7PXwPFXRnwZMq8w==*ryaz9hGpb4Kb5eWn+wLB9g==*E9Q21HBKK0aqPoz0ff3qTA==', 'WENDY JOHANA', 'MANJARREZ NOVOA', 41, 0, 'ACUDIENTE', 9),
+(10, 'prueba1', 'giHE*d/R5TATIMixUFhEABgwqQg==*FRn1fQVzw0dKHMDAJBZYXg==*quqmxSuw3KZ4iwSGnK7eRw==', 'prueba1', 'prueba1', 20, 10, 'ESTUDIANTE', NULL),
+(11, 'prueba2', 'hZmV*IjjGYLx8OtVWzyOnbPU3Iw==*fnbtk04Q9zNtKJOjt5x3gg==*Naj+jYnBHstr51rDe3IveQ==', 'prueba2', 'prueba2', 20, 10, 'ESTUDIANTE', NULL);
 
 --
--- Índices para tablas volcadas
+-- Indexes for dumped tables
 --
 
 --
--- Indices de la tabla `usuario`
+-- Indexes for table `usuario`
 --
 ALTER TABLE `usuario`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT de las tablas volcadas
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT de la tabla `usuario`
+-- AUTO_INCREMENT for table `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
