@@ -25,12 +25,13 @@ def listar_usuarios():
             usuarios.append(usuario)
         return jsonify(usuarios)
     except Exception as ex:
-        return jsonify({"mensaje": "Error", "Exito": False})
+        return jsonify({"mensaje": ex, "Codigo": False})
 
 
-@app.route("/usuario/<id>", methods=['GET'])
-def Consultar_usuario(id):
+@app.route("/un_usuario/", methods=['POST'])
+def consultar_Un_Usuario(id):
     try:
+        one_User=request.json
         cursor = conexion.connection.cursor()
         sql = "SELECT * FROM usuario WHERE id='{0}'".format(id)
         cursor.execute(sql)
@@ -42,7 +43,7 @@ def Consultar_usuario(id):
         else:
             return jsonify({"mensaje": "Usuario no encontrado", "Exito": True})
     except Exception as ex:
-        return jsonify({"mensaje": "Error", "Exito": False})
+        return jsonify({"mensaje": "Error", "Codigo": False})
 
 
 @app.route("/registrar_Usuario", methods=["POST"])
@@ -54,7 +55,7 @@ def Registrar_usuarios():
         print(sql)
         cursor.execute(sql)
         conexion.connection.commit()
-        return jsonify({"mensaje": "Usuario registrado", "Codigo": True})
+        return jsonify({"mensaje": "Usuario registrado Correctamente", "Codigo": True})
     except Exception as ex:
         return jsonify({"mensaje": ex, "Codigo": False})
 
@@ -74,7 +75,7 @@ def login():
         else:
             return jsonify({"mensaje": "Usuario no existe o datos incorrectos", "codigo": "False"})
     except Exception as ex:
-        raise Exception(ex)
+        return jsonify({"mensaje": ex, "codigo": False})
 
 
 @app.route("/get_by_id", methods=["POST"])
@@ -95,7 +96,7 @@ def get_by_id():
         else:
             return None
     except Exception as ex:
-        raise Exception(ex)
+        return jsonify({"mensaje": ex, "codigo": False})
 
 
 def pagina_no_encontrada(error):
