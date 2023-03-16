@@ -25,6 +25,19 @@ def get_ingresos():
     except:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
 
+@app.route("/registar_ingresos")
+def get_registro_ingresos():
+    try:
+        cursor = conexion.connection.cursor()
+        sql = """INSERT INTO usuario (username, password, NOMBRES, APELLIDOS, EDAD, GRADO, ROL)
+        VALUES ('{0}','{1}', '{2}')""".format(int(request.json['ID_USUARIO']), datetime(request.json['FECHA']), int(request.json['ESTADO']))
+        print(sql)
+        cursor.execute(sql)
+        conexion.connection.commit()
+        return jsonify({"mensaje": "Usuario registrado Correctamente", "Codigo": True})
+    except Exception as ex:
+        return jsonify({"mensaje": ex, "Codigo": False})
+
 
 @app.route("/total_estudiantes")
 def get_total_estudiantes():
@@ -36,7 +49,7 @@ def get_total_estudiantes():
         data1 = []
         data1.append(count1)
         print(data1)
-        return jsonify(data1)
+        return jsonify({"total_estudiantes": data1[0]})
     except:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
 
@@ -47,11 +60,11 @@ def get_inasistencia():
         cursor = conexion.connection.cursor()
         sql = """SELECT (SELECT COUNT(*) AS TOTAL_ESTUDIANTES FROM usuario WHERE ROL = 'estudiante') - (SELECT COUNT(FECHA) FROM ingresos WHERE DATE(FECHA) = CURDATE() AND TIPO_INGRESO = 1) AS INASISTENCIA"""
         cursor.execute(sql)
-        count2 = cursor.fetchone()
+        count2 = cursor.fetchone()[0]
         data2 = []
         data2.append(count2)
         print(data2)
-        return jsonify({"inasistencias": count2})
+        return jsonify({"inasistencias": data2[0]})
     except:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
 
@@ -66,7 +79,7 @@ def get_promedio():
         data3 = []
         data3.append(count3)
         print(data3)
-        return jsonify(data3)
+        return jsonify({"promedio":data3[0]})
     except:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
 
