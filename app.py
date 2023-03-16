@@ -1,9 +1,11 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, url_for
 from flask_mysqldb import MySQL
 from config import config
 from flask_cors import CORS
 import utils
 from datetime import datetime
+import requests
+import json
 
 
 app = Flask(__name__)
@@ -25,18 +27,39 @@ def get_ingresos():
     except:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
 
-@app.route("/registar_ingresos")
-def get_registro_ingresos():
-    try:
-        cursor = conexion.connection.cursor()
-        sql = """INSERT INTO usuario (username, password, NOMBRES, APELLIDOS, EDAD, GRADO, ROL)
-        VALUES ('{0}','{1}', '{2}')""".format(int(request.json['ID_USUARIO']), datetime(request.json['FECHA']), int(request.json['ESTADO']))
-        print(sql)
-        cursor.execute(sql)
-        conexion.connection.commit()
-        return jsonify({"mensaje": "Usuario registrado Correctamente", "Codigo": True})
-    except Exception as ex:
-        return jsonify({"mensaje": ex, "Codigo": False})
+# @app.route("/registar_ingresos", methods="POST")
+# def get_registro_ingresos():
+#     try:
+#         if request.method == "POST":
+#             data = request.get_json()
+#             datos = request.post(json=data)
+#             datos = json.loads(datos.text)
+#             cursor = conexion.conecction.cursor()
+#             sql = """INSERT INTO ingresos (ID_USUARIO, ESTADO)
+#             VALUES ('{0}')""".format(int(request.json['ID_USUARIO']))
+#             print(sql)
+#             cursor.execute(sql)
+#             conexion.connection.commit()
+#         # Aquí puede procesar los datos como lo desee
+#         return {'message': 'Datos procesados correctamente.'}, 200
+#     except:
+#         return jsonify({"message": "Error"}), 400
+
+    # try:
+    #     if request.method == "POST":
+    #     url = 
+    #     data = request.form.to_dict()
+    #     datos = requests.post(url, json=data)
+    #     datos = json.loads(datos.text)
+    #     cursor = conexion.connection.cursor()
+    #     sql = """INSERT INTO ingresos (ID_USUARIO, ESTADO)
+    #     VALUES ('{0}','{1}')""".format(int(request.json['ID_USUARIO']), int(request.json['ESTADO']))
+    #     print(sql)
+    #     cursor.execute(sql)
+    #     conexion.connection.commit()
+    #     return jsonify({"mensaje": "Usuario registrado Correctamente", "Codigo": True})
+    # except Exception as ex:
+    #     return jsonify({"mensaje": ex, "Codigo": False})
 
 
 @app.route("/total_estudiantes")
