@@ -26,6 +26,21 @@ def get_ingresos():
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
 
 
+@app.route("/insert_Ingreso", methods=["POST"])
+def insert_Ingreso():
+    try:
+        cursor = conexion.connection.cursor()
+        ingreso = request.json
+        print(ingreso["id_usuario"])
+        sql = "INSERT INTO ingresos (id_usuario,tipo_ingreso) VALUES ('{0}', '{1}')".format(
+            ingreso["id_usuario"], ingreso["tipo_ingreso"])
+        cursor.execute(sql)
+        conexion.connection.commit()
+        return jsonify({"mensaje": "ingreso insertado correctamente"})
+    except Exception as ex:
+        return jsonify({"mensaje": "error al insertar el ingreso"})
+
+
 @app.route("/total_estudiantes")
 def get_total_estudiantes():
     try:
