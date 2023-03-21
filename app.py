@@ -33,9 +33,9 @@ def insert_Ingreso():
     try:
         cursor = conexion.connection.cursor()
         ingreso = request.json
-        print(ingreso["id_usuario"])
-        sql = "INSERT INTO ingresos (id_usuario,tipo_ingreso) VALUES ('{0}', '{1}')".format(
-            ingreso["id_usuario"], ingreso["tipo_ingreso"])
+        print(ingreso["ID_USUARIO"])
+        sql = "INSERT INTO ingresos (ID_USUARIO, TIPO_INGRESO) VALUES ('{0}', '{1}')".format(
+            ingreso["ID_USUARIO"], ingreso["TIPO_INGRESO"])
         cursor.execute(sql)
         conexion.connection.commit()
         return jsonify({"mensaje": "ingreso insertado correctamente"})
