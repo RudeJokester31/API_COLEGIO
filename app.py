@@ -24,8 +24,33 @@ def get_ingresos():
         cursor.execute(sql)
         data = cursor.fetchone()
         return jsonify({"ingresos": data[0]})
-    except:
-        return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
+    except Exception as e:
+        return jsonify({"mensaje": "No se completó la consulta", "Codigo": e})
+
+
+@app.route('/ingresos_unUsuario', methods=['POST'])
+def ingresos_unUsuario():
+    try:
+        cursor = conexion.connection.cursor()
+        usuario = request.json
+        sql = "SELECT U.id, U.nombres, U.apellidos, U.rol, I.fecha, T.total_registros FROM usuario U INNER JOIN ingresos I ON U.id = I.id_usuario INNER JOIN (SELECT id_usuario, COUNT(*) AS total_registros FROM ingresos GROUP BY id_usuario) T ON U.id = T.id_usuario WHERE U.id = '{0}';".format(
+            usuario["id_usuario"])
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        print((data))
+        json_dict = {}
+
+        for i in range(len(data)):
+            json_dict[i] = {'id': data[i][0], 'nombre': data[i][1],
+                            'apellido': data[i][2], 'tipo': data[i][3], 'fecha': str(data[i][4])}
+            json_str = json.dumps(json_dict)
+
+        print(json_str)
+
+        return jsonify((json.loads(json_str)))
+
+    except Exception as e:
+        return jsonify({"mensaje": "error al insertar el ingreso", "Codigo": e})
 
 
 @app.route("/insert_Ingreso", methods=["POST"])
