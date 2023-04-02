@@ -133,15 +133,16 @@ def insistencia_Detallada():
                 AND DATE(ingresos.fecha) = '{0}' 
                 WHERE ingresos.id_ingreso IS NULL
                 GROUP BY DATE(.ingresos.fecha)""".format(fecha_actual)
-        print(fecha_actual)
         cursor.execute(sql)
         inasistencia = cursor.fetchall()
-        inasistencia_detallada = []
-        for fila in inasistencia:
-            inasistencias = {"id": fila[0], "nombres": fila[1], "apellidos": fila[2], "rol": fila [3]}
-            inasistencia_detallada.append(inasistencias)
-            print(inasistencia_detallada)
-            return jsonify (inasistencia_detallada)
+        json_dict = {}
+        for i in range(len(inasistencia)):
+            json_dict[i] = {'id': inasistencia[i][0], 'nombres': inasistencia[i][1], 'apellidos': inasistencia[i][2], 'rol': inasistencia[i][3]}
+            json_str = json.dumps(json_dict)
+            print(inasistencia)
+            print (json_dict)
+            print(json_str)
+            return jsonify ((json.loads(json_str)))
     except Exception as ex:
         return jsonify ({"mensaje": ex, "Codigo": False})
 
