@@ -20,7 +20,6 @@ def get_ingresos():
         fecha_actual = datetime.now().date()
         sql = "SELECT COUNT(FECHA) AS INGRESOS FROM ingresos WHERE DATE(FECHA) = '{0}' AND TIPO_INGRESO = 1".format(
             fecha_actual)
-        print(fecha_actual)
         cursor.execute(sql)
         data = cursor.fetchone()
         return jsonify({"ingresos": data[0]})
@@ -37,16 +36,12 @@ def ingresos_unUsuario():
             usuario["id_usuario"])
         cursor.execute(sql)
         data = cursor.fetchall()
-        print((data))
         json_dict = {}
 
         for i in range(len(data)):
             json_dict[i] = {'id': data[i][0], 'nombre': data[i][1],
                             'apellido': data[i][2], 'tipo': data[i][3], 'fecha': str(data[i][4])}
             json_str = json.dumps(json_dict)
-
-        print(json_str)
-
         return jsonify((json.loads(json_str)))
 
     except Exception as e:
@@ -58,7 +53,6 @@ def insert_Ingreso():
     try:
         cursor = conexion.connection.cursor()
         ingreso = request.json
-        print(ingreso["ID_USUARIO"])
         sql = "INSERT INTO ingresos (ID_USUARIO, TIPO_INGRESO) VALUES ('{0}', '{1}')".format(
             ingreso["ID_USUARIO"], ingreso["TIPO_INGRESO"])
         cursor.execute(sql)
@@ -77,7 +71,6 @@ def get_total_estudiantes():
         count1 = cursor.fetchone()[0]
         data1 = []
         data1.append(count1)
-        print(data1)
         return jsonify({"total_estudiantes": data1[0]})
     except:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
@@ -92,7 +85,6 @@ def get_inasistencia():
         count2 = cursor.fetchone()[0]
         data2 = []
         data2.append(count2)
-        print(data2)
         return jsonify({"inasistencias": data2[0]})
     except:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
@@ -107,7 +99,6 @@ def get_promedio():
         count3 = float(cursor.fetchone()[1])
         data3 = []
         data3.append(count3)
-        print(data3)
         return jsonify({"promedio": data3[0]})
     except:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
@@ -123,7 +114,6 @@ def get_estadisticas():
         cursor.execute(sql)
         estadisticas = cursor.fetchall()
         resultados = []
-        print(estadisticas)
         for fecha, total_ingresos in estadisticas:
             resultado = {"fecha": fecha, "total_ingresos": total_ingresos}
             resultados.append(resultado)
@@ -131,6 +121,29 @@ def get_estadisticas():
     except:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
 
+@app.route("/inasistencia_detallada", methods=['GET'])
+def insistencia_Detallada():
+    try:
+        cursor = conexion.connection.cursor()
+        fecha_actual = datetime.now().date()
+        sql = """SELECT usuario.id, usuario.nombres, usuario.apellidos, usuario.rol
+                FROM usuario 
+                LEFT JOIN ingresos 
+                ON usuario.id = ingresos.id_usuario
+                AND DATE(ingresos.fecha) = '{0}' 
+                WHERE ingresos.id_ingreso IS NULL
+                GROUP BY DATE(.ingresos.fecha)""".format(fecha_actual)
+        print(fecha_actual)
+        cursor.execute(sql)
+        inasistencia = cursor.fetchall()
+        inasistencia_detallada = []
+        for fila in inasistencia:
+            inasistencias = {"id": fila[0], "nombres": fila[1], "apellidos": fila[2], "rol": fila [3]}
+            inasistencia_detallada.append(inasistencias)
+            print(inasistencia_detallada)
+            return jsonify (inasistencia_detallada)
+    except Exception as ex:
+        return jsonify ({"mensaje": ex, "Codigo": False})
 
 @app.route("/l_ingresos", methods=['GET'])
 def listar_ingresos():
@@ -160,7 +173,6 @@ def get_estadisticas_grafico():
         cursor.execute(sql)
         estadisticas = cursor.fetchall()
         resultados = []
-        print(estadisticas)
         for x in estadisticas:
             resultado = {"fecha": x[0], "cantidad": x[1]}
             resultados.append(resultado)
@@ -178,7 +190,6 @@ def listar_usuarios():
         cursor.execute(sql)
         datos = cursor.fetchall()
         usuarios = []
-        print(datos)
         for fila in datos:
             usuario = {"id": fila[0], "username": fila[1], "password": fila[2], "NOMBRES": fila[3],
                        "APELLIDOS": fila[4], "EDAD": fila[5], "GRADO": fila[6], "ROL": fila[7], "ID_HUELLA": fila[8]}
@@ -188,22 +199,22 @@ def listar_usuarios():
         return jsonify({"mensaje": ex, "Codigo": False})
 
 
-@app.route("/un_usuario/", methods=['POST'])
-def consultar_Un_Usuario(id):
-    try:
-        one_User = request.json
-        cursor = conexion.connection.cursor()
-        sql = "SELECT * FROM usuario WHERE id='{0}'".format(id)
-        cursor.execute(sql)
-        datos = cursor.fetchone()
-        if datos != None:
-            usuario = {"id": datos[0], "username": datos[1], "password": datos[2], "NOMBRES": datos[3],
-                       "APELLIDOS": datos[4], "EDAD": datos[5], "GRADO": datos[6], "ROL": datos[7], "ID_HUELLA": datos[8]}
-            return jsonify({"Usuario": usuario, "mensaje": "Usuario encontrado"})
-        else:
-            return jsonify({"mensaje": "Usuario no encontrado", "Exito": True})
-    except Exception as ex:
-        return jsonify({"mensaje": "Error", "Codigo": False})
+# @app.route("/un_usuario/", methods=['POST'])
+# def consultar_Un_Usuario(id):
+#     try:
+#         one_User = request.json
+#         cursor = conexion.connection.cursor()
+#         sql = "SELECT * FROM usuario WHERE id='{0}'".format(id)
+#         cursor.execute(sql)
+#         datos = cursor.fetchone()
+#         if datos != None:
+#             usuario = {"id": datos[0], "username": datos[1], "password": datos[2], "NOMBRES": datos[3],
+#                        "APELLIDOS": datos[4], "EDAD": datos[5], "GRADO": datos[6], "ROL": datos[7], "ID_HUELLA": datos[8]}
+#             return jsonify({"Usuario": usuario, "mensaje": "Usuario encontrado"})
+#         else:
+#             return jsonify({"mensaje": "Usuario no encontrado", "Exito": True})
+#     except Exception as ex:
+#         return jsonify({"mensaje": "Error", "Codigo": False})
 
 
 @app.route("/registrar_Usuario", methods=["POST"])
@@ -212,7 +223,6 @@ def Registrar_usuarios():
         cursor = conexion.connection.cursor()
         sql = """INSERT INTO usuario (username, password, NOMBRES, APELLIDOS, EDAD, GRADO, ROL)
         VALUES ('{0}','{1}', '{2}', '{3}', '{4}', '{5}', '{6}')""".format(request.json['username'], utils.encryp_Password(request.json['password']), request.json['NOMBRES'], request.json['APELLIDOS'], int(request.json['EDAD']), int(request.json['GRADO']), request.json['ROL'])
-        print(sql)
         cursor.execute(sql)
         conexion.connection.commit()
         return jsonify({"mensaje": "Usuario registrado Correctamente", "Codigo": True})
@@ -242,9 +252,7 @@ def login():
 def get_by_id():
     try:
         data = request.json
-        print(data)
         id = data["id"]
-        print(id)
         cursor = conexion.connection.cursor()
         sql = """SELECT id, username, password, NOMBRES FROM
         usuario WHERE id= '{}'""".format(id)
