@@ -48,6 +48,25 @@ def ingresos_unUsuario():
         return jsonify({"mensaje": "error al insertar el ingreso", "Codigo": e})
 
 
+@app.route('/Inasistencia_Detallada', methods=['POST'])
+def Inasistencia_Detallada():
+    try:
+        cursor = conexion.connection.cursor()
+        fecha = request.json
+        sql = "SET @fecha = '{0}';".format(fecha["fecha"])
+        cursor.execute(sql)
+        sql = "SELECT usuario.ID, usuario.NOMBRES, usuario.APELLIDOS FROM usuario LEFT JOIN ingresos ON usuario.ID = ingresos.ID_USUARIO AND DATE(ingresos.FECHA) = @fecha WHERE ingresos.ID_INGRESO IS NULL ORDER BY usuario.ID;"
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        json_dict = {}
+        for i in range(len(data)):
+            json_dict[i] = {'id': data[i][0], 'nombre': data[i][1],
+                            'apellido': data[i][2]}
+            json_str = json.dumps(json_dict)
+        return jsonify((json.loads(json_str)))
+    except Exception as e:
+        return jsonify({"mensaje": "No se completó la consulta", "Codigo": e})
+
 @app.route("/insert_Ingreso", methods=["POST"])
 def insert_Ingreso():
     try:
@@ -200,22 +219,7 @@ def listar_usuarios():
         return jsonify({"mensaje": ex, "Codigo": False})
 
 
-# @app.route("/un_usuario/", methods=['POST'])
-# def consultar_Un_Usuario(id):
-#     try:
-#         one_User = request.json
-#         cursor = conexion.connection.cursor()
-#         sql = "SELECT * FROM usuario WHERE id='{0}'".format(id)
-#         cursor.execute(sql)
-#         datos = cursor.fetchone()
-#         if datos != None:
-#             usuario = {"id": datos[0], "username": datos[1], "password": datos[2], "NOMBRES": datos[3],
-#                        "APELLIDOS": datos[4], "EDAD": datos[5], "GRADO": datos[6], "ROL": datos[7], "ID_HUELLA": datos[8]}
-#             return jsonify({"Usuario": usuario, "mensaje": "Usuario encontrado"})
-#         else:
-#             return jsonify({"mensaje": "Usuario no encontrado", "Exito": True})
-#     except Exception as ex:
-#         return jsonify({"mensaje": "Error", "Codigo": False})
+
 
 
 @app.route("/registrar_Usuario", methods=["POST"])
