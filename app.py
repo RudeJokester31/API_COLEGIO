@@ -22,6 +22,7 @@ def get_ingresos():
             fecha_actual)
         cursor.execute(sql)
         data = cursor.fetchone()
+        cursor.close()
         return jsonify({"ingresos": data[0]})
     except Exception as e:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": e})
@@ -37,7 +38,7 @@ def ingresos_unUsuario():
         cursor.execute(sql)
         data = cursor.fetchall()
         json_dict = {}
-
+        cursor.close()
         for i in range(len(data)):
             json_dict[i] = {'id': data[i][0], 'nombre': data[i][1],
                             'apellido': data[i][2], 'tipo': data[i][3], 'fecha': str(data[i][4])}
@@ -58,6 +59,7 @@ def Inasistencia_Detallada():
         sql = "SELECT usuario.ID, usuario.NOMBRES, usuario.APELLIDOS FROM usuario LEFT JOIN ingresos ON usuario.ID = ingresos.ID_USUARIO AND DATE(ingresos.FECHA) = @fecha WHERE ingresos.ID_INGRESO IS NULL ORDER BY usuario.ID;"
         cursor.execute(sql)
         data = cursor.fetchall()
+        cursor.close()
         json_dict = {}
         for i in range(len(data)):
             json_dict[i] = {'id': data[i][0], 'nombre': data[i][1],
@@ -76,6 +78,7 @@ def insert_Ingreso():
             ingreso["ID_USUARIO"], ingreso["TIPO_INGRESO"])
         cursor.execute(sql)
         conexion.connection.commit()
+        cursor.close()
         return jsonify({"mensaje": "ingreso insertado correctamente"})
     except Exception as ex:
         return jsonify({"mensaje": "error al insertar el ingreso"})
@@ -90,6 +93,7 @@ def get_total_estudiantes():
         count1 = cursor.fetchone()[0]
         data1 = []
         data1.append(count1)
+        cursor.close()
         return jsonify({"total_estudiantes": data1[0]})
     except:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
@@ -104,6 +108,7 @@ def get_inasistencia():
         count2 = cursor.fetchone()[0]
         data2 = []
         data2.append(count2)
+        cursor.close()
         return jsonify({"inasistencias": data2[0]})
     except:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
@@ -118,6 +123,7 @@ def get_promedio():
         count3 = float(cursor.fetchone()[1])
         data3 = []
         data3.append(count3)
+        cursor.close()
         return jsonify({"promedio": data3[0]})
     except:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
@@ -133,6 +139,7 @@ def get_estadisticas():
         cursor.execute(sql)
         estadisticas = cursor.fetchall()
         resultados = []
+        cursor.close()
         for fecha, total_ingresos in estadisticas:
             resultado = {"fecha": fecha, "total_ingresos": total_ingresos}
             resultados.append(resultado)
@@ -140,30 +147,6 @@ def get_estadisticas():
     except:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": False})
 
-@app.route("/inasistencia_detallada", methods=['GET'])
-def insistencia_Detallada():
-    try:
-        cursor = conexion.connection.cursor()
-        fecha_actual = datetime.now().date()
-        sql = """SELECT usuario.id, usuario.nombres, usuario.apellidos, usuario.rol
-                FROM usuario 
-                LEFT JOIN ingresos 
-                ON usuario.id = ingresos.id_usuario
-                AND DATE(ingresos.fecha) = '{0}' 
-                WHERE ingresos.id_ingreso IS NULL
-                GROUP BY DATE(.ingresos.fecha)""".format(fecha_actual)
-        cursor.execute(sql)
-        inasistencia = cursor.fetchall()
-        json_dict = {}
-        for i in range(len(inasistencia)):
-            json_dict[i] = {'id': inasistencia[i][0], 'nombres': inasistencia[i][1], 'apellidos': inasistencia[i][2], 'rol': inasistencia[i][3]}
-            json_str = json.dumps(json_dict)
-            print(inasistencia)
-            print (json_dict)
-            print(json_str)
-            return jsonify ((json.loads(json_str)))
-    except Exception as ex:
-        return jsonify ({"mensaje": ex, "Codigo": False})
 
 @app.route("/l_ingresos", methods=['GET'])
 def listar_ingresos():
@@ -174,9 +157,10 @@ def listar_ingresos():
         cursor.execute(sql)
         datos = cursor.fetchall()
         ingresos = []
+        cursor.close()
         for fila in datos:
             ingreso = {"ID_USUARIO": fila[1],
-                       "FECHA": fila[2], "ESTADO": fila[3]}
+                    "FECHA": fila[2], "ESTADO": fila[3]}
             ingresos.append(ingreso)
         return jsonify(ingresos)
     except Exception as ex:
@@ -193,6 +177,7 @@ def get_estadisticas_grafico():
         cursor.execute(sql)
         estadisticas = cursor.fetchall()
         resultados = []
+        cursor.close()
         for x in estadisticas:
             resultado = {"fecha": x[0], "cantidad": x[1]}
             resultados.append(resultado)
@@ -210,6 +195,7 @@ def listar_usuarios():
         cursor.execute(sql)
         datos = cursor.fetchall()
         usuarios = []
+        cursor.close()
         for fila in datos:
             usuario = {"id": fila[0], "username": fila[1], "password": fila[2], "NOMBRES": fila[3],
                        "APELLIDOS": fila[4], "EDAD": fila[5], "GRADO": fila[6], "ROL": fila[7], "ID_HUELLA": fila[8]}
@@ -230,6 +216,7 @@ def Registrar_usuarios():
         VALUES ('{0}','{1}', '{2}', '{3}', '{4}', '{5}', '{6}')""".format(request.json['username'], utils.encryp_Password(request.json['password']), request.json['NOMBRES'], request.json['APELLIDOS'], int(request.json['EDAD']), int(request.json['GRADO']), request.json['ROL'])
         cursor.execute(sql)
         conexion.connection.commit()
+        cursor.close()
         return jsonify({"mensaje": "Usuario registrado Correctamente", "Codigo": True})
     except Exception as ex:
         return jsonify({"mensaje": ex, "Codigo": False})
@@ -245,6 +232,7 @@ def login():
         cursor.execute(sql)
         row = cursor.fetchone()
         password_Bd = utils.return_Password(row[2])
+        cursor.close()
         if password_Bd == user["password"]:
             return jsonify({"mensaje": "ok", "codigo": "True", "id": row[0], "usuario": row[1], "password": password_Bd})
         else:
@@ -264,6 +252,7 @@ def get_by_id():
         cursor.execute(sql)
         row = cursor.fetchone()
         data = row[0], row[1], None, row[3]
+        cursor.close()
         if row != None:
             return jsonify({'id': row[0], 'usuario': row[1], 'password': None, 'nombres': row[3]})
         else:
