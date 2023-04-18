@@ -37,8 +37,10 @@ def ingresos_unUsuario():
             usuario["id_usuario"])
         cursor.execute(sql)
         data = cursor.fetchall()
-        json_dict = {}
         cursor.close()
+        if not data:
+            return jsonify({"mensaje": "No se encontraron resultados para el ID de usuario proporcionado", "Codigo": "False"})
+        json_dict = {}
         for i in range(len(data)):
             json_dict[i] = {'id': data[i][0], 'nombre': data[i][1],
                             'apellido': data[i][2], 'tipo': data[i][3], 'fecha': str(data[i][4])}
@@ -68,6 +70,7 @@ def Inasistencia_Detallada():
         return jsonify((json.loads(json_str)))
     except Exception as e:
         return jsonify({"mensaje": "No se completó la consulta", "Codigo": e})
+
 
 @app.route("/insert_Ingreso", methods=["POST"])
 def insert_Ingreso():
@@ -160,7 +163,7 @@ def listar_ingresos():
         cursor.close()
         for fila in datos:
             ingreso = {"ID_USUARIO": fila[1],
-                    "FECHA": fila[2], "ESTADO": fila[3]}
+                       "FECHA": fila[2], "ESTADO": fila[3]}
             ingresos.append(ingreso)
         return jsonify(ingresos)
     except Exception as ex:
@@ -205,9 +208,6 @@ def listar_usuarios():
         return jsonify({"mensaje": ex, "Codigo": False})
 
 
-
-
-
 @app.route("/registrar_Usuario", methods=["POST"])
 def Registrar_usuarios():
     try:
@@ -231,8 +231,10 @@ def login():
             usuario WHERE username= '{}'""".format(user["username"])
         cursor.execute(sql)
         row = cursor.fetchone()
-        password_Bd = utils.return_Password(row[2])
         cursor.close()
+        if row is None:
+            return jsonify({"mensaje": "Usuario no existe o datos incorrectos", "codigo": "False"})
+        password_Bd = utils.return_Password(row[2])
         if password_Bd == user["password"]:
             return jsonify({"mensaje": "ok", "codigo": "True", "id": row[0], "usuario": row[1], "password": password_Bd})
         else:
